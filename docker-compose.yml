@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  openui:
+    image: ghcr.io/wandb/openui
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    volumes:
+      - ./openui:/root/.openui/
+    ports:
+      - 8080:7878
+
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:0.5
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    volumes:
+      - ./open-webui:/app/backend/data
+    ports:
+      - 8081:8080
+
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ./ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
